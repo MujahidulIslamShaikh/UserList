@@ -61,7 +61,45 @@ const Context = ({ children }) => {
 
 
     }
+    // ========================= Sort Data =================
+    const [isAscending, setIsAscending] = useState()
 
+    const handSortById = () => {
+        const sorted = [...userData].sort((a, b) => isAscending ? a.id - b.id : b.id - a.id);
+        setFilterData(sorted);
+        setIsAscending(!isAscending);
+    }
+
+    const handSortByName = () => {
+        const sorted = [...userData].sort((a, b) =>
+            isAscending ? a.firstName.localeCompare(b.firstName) : b.firstName.localeCompare(a.firstName)
+        );
+        setFilterData(sorted);
+        setIsAscending(!isAscending);
+    };
+
+    const handSortByAge = () => {
+        const sorted = [...userData].sort((a, b) => isAscending ? a.age - b.age : b.age - a.age);
+        setFilterData(sorted);
+        setIsAscending(!isAscending);
+    }
+    // ================================== Pagination =======================
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10; // 10 users per page
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = filterData.slice(indexOfFirstUser, indexOfLastUser);
+
+
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(filterData.length / usersPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
     useEffect(() => {
         UserAPIdata()
         console.log('chala')
@@ -69,7 +107,9 @@ const Context = ({ children }) => {
 
     return (
         <div className='Context'>
-            <dataCollection.Provider value={{ userData, handleFormSubmit, handleSrchInput, age, filterData }}>
+            <dataCollection.Provider value={{ userData, handleFormSubmit, handleSrchInput, age, filterData,
+                 setFilterData, handSortById, handSortByName, handSortByAge, pageNumbers, currentPage,
+                 currentUsers, paginate }}>
                 {children}
             </dataCollection.Provider>
         </div>
